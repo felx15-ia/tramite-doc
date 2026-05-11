@@ -9,6 +9,32 @@ let searchQuery  = '';
 let estadoFilter = '';
 let deleteTarget = null;
 
+// ── Autenticación ───────────────────────────────────────────
+const PASS_CORRECTA = 'secre2026';
+const loginForm      = document.getElementById('login-form');
+const loginError     = document.getElementById('login-error');
+
+function checkAuth() {
+  if (sessionStorage.getItem('admin_auth') === 'true') {
+    document.body.classList.add('authenticated');
+    loadTramites();
+  }
+}
+
+loginForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const pass = document.getElementById('admin-pass').value;
+  if (pass === PASS_CORRECTA) {
+    sessionStorage.setItem('admin_auth', 'true');
+    document.body.classList.add('authenticated');
+    showToast('Acceso concedido');
+    loadTramites();
+  } else {
+    loginError.style.display = 'block';
+    setTimeout(() => { loginError.style.display = 'none'; }, 3000);
+  }
+});
+
 // ── DOM refs ─────────────────────────────────────────────────
 const form         = document.getElementById('form-tramite');
 const tableBody    = document.getElementById('table-body');
@@ -396,4 +422,4 @@ if (btnExportExcel) {
 
 // ── Init ──────────────────────────────────────────────────────
 document.getElementById('fecha-recepcion').valueAsDate = new Date();
-loadTramites();
+checkAuth();
