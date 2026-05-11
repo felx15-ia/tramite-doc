@@ -159,6 +159,7 @@
         <option value="Archivado">🗄️ Archivado</option>
       </select>
       <button class="btn btn-ghost" id="btn-export-pdf" style="margin-left:auto; border:1px solid var(--border-color); background:white;">📄 Exportar PDF</button>
+      <button class="btn btn-ghost" id="btn-export-excel" style="margin-left:8px; border:1px solid var(--border-color); background:white;">📊 Exportar Excel</button>
       <span class="record-count" id="record-count" style="margin-left:10px;">— registros</span>
     </div>
 
@@ -212,9 +213,10 @@
 <!-- ── TOAST CONTAINER ─────────────────────────────────── -->
 <div class="toast-container" aria-live="polite"></div>
 
-<!-- ── LIBRERÍAS PDF ────────────────────────────────────── -->
+<!-- ── LIBRERÍAS EXPORTACIÓN ───────────────────────────── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script type="module" src="js/app.js"></script>
 </body>

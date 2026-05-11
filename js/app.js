@@ -354,6 +354,42 @@ if (btnExportPdf) {
   });
 }
 
+// ── Exportar a Excel ──────────────────────────────────────────
+const btnExportExcel = document.getElementById('btn-export-excel');
+if (btnExportExcel) {
+  btnExportExcel.addEventListener('click', () => {
+    if (!allTramites || allTramites.length === 0) {
+      showToast('No hay datos para exportar', 'error');
+      return;
+    }
+
+    const data = allTramites.map(t => ({
+      'N° Registro': t.nro_registro,
+      'Tipo': t.tipo,
+      'Remitente': t.remitente,
+      'Asunto': t.asunto,
+      'Prioridad': t.prioridad,
+      'Fecha Recepción': t.fecha_recepcion,
+      'Estado': t.estado,
+      'Fecha Límite': t.fecha_limite || 'Sin plazo',
+      'Observaciones': t.observaciones || ''
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Trámites");
+
+    // Ajustar anchos de columna básicos
+    const wscols = [
+      {wch: 15}, {wch: 12}, {wch: 25}, {wch: 40}, {wch: 10}, {wch: 15}, {wch: 12}, {wch: 15}, {wch: 30}
+    ];
+    worksheet['!cols'] = wscols;
+
+    XLSX.writeFile(workbook, "reporte_tramites.xlsx");
+    showToast('Excel exportado correctamente');
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────
 document.getElementById('fecha-recepcion').valueAsDate = new Date();
 loadTramites();
