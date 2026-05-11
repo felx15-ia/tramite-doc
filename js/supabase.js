@@ -62,6 +62,15 @@ async function deleteTramite(id) {
   return sbFetch(`${TABLE}?id=eq.${id}`, { method: 'DELETE' });
 }
 
+/** Actualizar un trámite completo */
+async function updateTramite(id, payload) {
+  return sbFetch(`${TABLE}?id=eq.${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+    headers: { 'Prefer': 'return=representation' },
+  });
+}
+
 /** Verificar si un N° de registro ya existe */
 async function existeRegistro(nro) {
   const r = await sbFetch(`${TABLE}?nro_registro=eq.${encodeURIComponent(nro)}&select=id`);
@@ -69,5 +78,5 @@ async function existeRegistro(nro) {
 }
 
 export {
-  getTramites, createTramite, updateEstado, deleteTramite, existeRegistro
+  getTramites, createTramite, updateEstado, deleteTramite, existeRegistro, updateTramite
 };

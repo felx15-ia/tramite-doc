@@ -1,13 +1,15 @@
 // ============================================================
 //  GESTOR DOCUMENTARIO — LÓGICA PRINCIPAL (APP.JS)
 // ============================================================
-import { getTramites, createTramite, updateEstado, deleteTramite, existeRegistro } from './supabase.js';
+import { getTramites, createTramite, updateEstado, deleteTramite, existeRegistro, updateTramite } from './supabase.js';
 
 // ── Estado global ────────────────────────────────────────────
 let allTramites  = [];
 let searchQuery  = '';
 let estadoFilter = '';
 let deleteTarget = null;
+let editMode     = false;
+let editId       = null;
 
 // ── Autenticación ───────────────────────────────────────────
 const PASS_CORRECTA = 'secre2026';
@@ -45,6 +47,8 @@ const deleteModal  = document.getElementById('delete-modal');
 const deleteMsgEl  = document.getElementById('delete-msg');
 const confirmDel   = document.getElementById('confirm-delete');
 const cancelDel    = document.getElementById('cancel-delete');
+const btnCancelEdit = document.getElementById('btn-cancelar-edit');
+const btnLimpiar   = document.getElementById('btn-limpiar');
 
 // ── Utilidades de fecha ──────────────────────────────────────
 function diasEnGestion(fechaStr) {
@@ -220,6 +224,8 @@ function renderTable(list) {
         <td>
           <div class="status-actions">
             ${btnsEstado}
+            <button class="btn btn-ghost btn-sm btn-edit"
+              data-id="${t.id}" title="Editar Datos">✏️</button>
             <button class="btn btn-danger btn-sm btn-delete"
               data-id="${t.id}" data-nro="${t.nro_registro}" title="Eliminar">🗑️</button>
           </div>
@@ -268,22 +274,28 @@ form.addEventListener('submit', async e => {
   };
 
   try {
-    const dup = await existeRegistro(payload.nro_registro);
-    if (dup) {
-      showToast(`N° "${payload.nro_registro}" ya existe`, 'error');
-      btn.disabled = false; btn.innerHTML = '💾 Registrar Documento';
-      return;
+    if (editMode) {
+      await updateTramite(editId, payload);
+      showToast(`Trámite ${payload.nro_registro} actualizado`);
+      cancelEdit();
+    } else {
+      const dup = await existeRegistro(payload.nro_registro);
+      if (dup) {
+        showToast(`N° "${payload.nro_registro}" ya existe`, 'error');
+        btn.disabled = false; btn.innerHTML = '💾 Registrar Documento';
+        return;
+      }
+      await createTramite(payload);
+      showToast(`Trámite ${payload.nro_registro} registrado`);
+      form.reset();
+      document.getElementById('fecha-recepcion').valueAsDate = new Date();
     }
-    await createTramite(payload);
-    showToast(`Trámite ${payload.nro_registro} registrado`);
-    form.reset();
-    document.getElementById('fecha-recepcion').valueAsDate = new Date();
     await loadTramites();
   } catch(err) {
-    showToast('Error al guardar: ' + err.message, 'error');
+    showToast('Error: ' + err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '💾 Registrar Documento';
+    btn.innerHTML = editMode ? '💾 Actualizar Datos' : '💾 Registrar Documento';
   }
 });
 
@@ -310,6 +322,14 @@ tableBody.addEventListener('click', async e => {
       btnEstado.disabled = false;
     }
   }
+  
+  const btnEdit = e.target.closest('.btn-edit');
+  if (btnEdit) {
+    const id = btnEdit.dataset.id;
+    const item = allTramites.find(t => t.id === id);
+    if (item) startEdit(item);
+  }
+
   const btnDel = e.target.closest('.btn-delete');
   if (btnDel) {
     deleteTarget = btnDel.dataset.id;
@@ -317,6 +337,43 @@ tableBody.addEventListener('click', async e => {
     deleteModal.classList.add('open');
   }
 });
+
+// ── Funciones de Edición ─────────────────────────────────────
+function startEdit(t) {
+  editMode = true;
+  editId   = t.id;
+  
+  // Poblar formulario
+  form['nro-registro'].value = t.nro_registro;
+  form['tipo'].value         = t.tipo;
+  form['remitente'].value    = t.remitente;
+  form['derivado-a'].value   = t.derivado_a || '';
+  form['asunto'].value       = t.asunto;
+  form['prioridad'].value    = t.prioridad;
+  form['fecha-recepcion'].value = t.fecha_recepcion;
+  form['fecha-limite'].value    = t.fecha_limite || '';
+  form['observaciones'].value   = t.observaciones || '';
+  
+  // UI
+  document.getElementById('btn-guardar').innerHTML = '💾 Actualizar Datos';
+  btnCancelEdit.style.display = 'inline-block';
+  btnLimpiar.style.display    = 'none';
+  
+  // Scroll al formulario
+  window.scrollTo({ top: form.offsetTop - 100, behavior: 'smooth' });
+}
+
+function cancelEdit() {
+  editMode = false;
+  editId   = null;
+  form.reset();
+  document.getElementById('fecha-recepcion').valueAsDate = new Date();
+  document.getElementById('btn-guardar').innerHTML = '💾 Registrar Documento';
+  btnCancelEdit.style.display = 'none';
+  btnLimpiar.style.display    = 'inline-block';
+}
+
+btnCancelEdit.addEventListener('click', cancelEdit);
 
 // ── Modal borrado ─────────────────────────────────────────────
 confirmDel.addEventListener('click', async () => {
