@@ -33,7 +33,8 @@ async function getTramites(search = '', estado = '') {
   let qs = `select=*&order=fecha_recepcion.desc`;
   if (search) {
     const enc = encodeURIComponent(search);
-    qs += `&or=(asunto.ilike.*${enc}*,remitente.ilike.*${enc}*)`;
+    // Buscamos en Nro Registro, Asunto, Remitente y Derivado A
+    qs += `&or=(nro_registro.ilike.*${enc}*,asunto.ilike.*${enc}*,remitente.ilike.*${enc}*,derivado_a.ilike.*${enc}*)`;
   }
   if (estado) qs += `&estado=eq.${encodeURIComponent(estado)}`;
   return sbFetch(`${TABLE}?${qs}`);

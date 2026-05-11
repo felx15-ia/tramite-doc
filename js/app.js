@@ -181,15 +181,16 @@ function renderTable(list) {
       <tr class="${rowCls}" data-id="${t.id}">
         <td><strong style="color:var(--cyan-dark)">${t.nro_registro}</strong></td>
         <td><span class="badge badge-tipo">${t.tipo}</span></td>
-        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.remitente}">${t.remitente}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.asunto}">${t.asunto}</td>
+        <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.remitente}">${t.remitente}</td>
+        <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.derivado_a || ''}">${t.derivado_a || '—'}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.asunto}">${t.asunto}</td>
         <td>${badgePrioridad(t.prioridad)}</td>
         <td style="white-space:nowrap">${formatDate(t.fecha_recepcion)}</td>
         <td>${badgeEstado(t.estado)}</td>
         <td class="${dCls}" style="text-align:center;font-weight:600;white-space:nowrap">
           ${dias}d ${dias > 3 && t.estado === 'Recibido' ? (dias > 5 ? '🔴' : '🟠') : ''}
         </td>
-        <td style="min-width:130px">${renderFechaLimite(t.fecha_limite, t.estado)}</td>
+        <td style="min-width:120px">${renderFechaLimite(t.fecha_limite, t.estado)}</td>
         <td>
           <div class="status-actions">
             ${btnsEstado}
@@ -231,6 +232,7 @@ form.addEventListener('submit', async e => {
     nro_registro:    form['nro-registro'].value.trim(),
     tipo:            form['tipo'].value,
     remitente:       form['remitente'].value.trim(),
+    derivado_a:      form['derivado-a'].value.trim() || null,
     asunto:          form['asunto'].value.trim(),
     prioridad:       form['prioridad'].value,
     fecha_recepcion: form['fecha-recepcion'].value,
@@ -333,6 +335,7 @@ if (btnExportPdf) {
       t.nro_registro,
       t.tipo,
       t.remitente,
+      t.derivado_a || '—',
       t.asunto,
       t.prioridad,
       formatDate(t.fecha_recepcion),
@@ -342,10 +345,10 @@ if (btnExportPdf) {
     
     doc.autoTable({
       startY: 20,
-      head: [['N° Registro', 'Tipo', 'Remitente', 'Asunto', 'Prioridad', 'F. Recepción', 'Estado', 'F. Límite']],
+      head: [['N° Registro', 'Tipo', 'Origen', 'Destino', 'Asunto', 'Prioridad', 'F. Recepción', 'Estado', 'F. Límite']],
       body: tableData,
       theme: 'grid',
-      styles: { fontSize: 9 },
+      styles: { fontSize: 8 },
       headStyles: { fillColor: [99, 102, 241] }
     });
     
@@ -366,7 +369,8 @@ if (btnExportExcel) {
     const data = allTramites.map(t => ({
       'N° Registro': t.nro_registro,
       'Tipo': t.tipo,
-      'Remitente': t.remitente,
+      'Origen (Remitente)': t.remitente,
+      'Destino (Derivado A)': t.derivado_a || '—',
       'Asunto': t.asunto,
       'Prioridad': t.prioridad,
       'Fecha Recepción': t.fecha_recepcion,
@@ -381,7 +385,7 @@ if (btnExportExcel) {
 
     // Ajustar anchos de columna básicos
     const wscols = [
-      {wch: 15}, {wch: 12}, {wch: 25}, {wch: 40}, {wch: 10}, {wch: 15}, {wch: 12}, {wch: 15}, {wch: 30}
+      {wch: 15}, {wch: 12}, {wch: 25}, {wch: 25}, {wch: 40}, {wch: 10}, {wch: 15}, {wch: 12}, {wch: 15}, {wch: 30}
     ];
     worksheet['!cols'] = wscols;
 

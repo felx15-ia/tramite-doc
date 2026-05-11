@@ -72,7 +72,7 @@ async function loadData() {
   const lastUpdate  = document.getElementById('last-update');
 
   tableBody.innerHTML = `
-    <tr><td colspan="9">
+    <tr><td colspan="10">
       <div class="loading-overlay"><div class="spinner"></div><span>Cargando...</span></div>
     </td></tr>`;
 
@@ -82,7 +82,7 @@ async function loadData() {
     lastUpdate.textContent  = new Date().toLocaleTimeString('es-PE');
 
     if (!list.length) {
-      tableBody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">No hay trámites</div></div></td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">No hay trámites</div></div></td></tr>`;
       return;
     }
 
@@ -94,8 +94,9 @@ async function loadData() {
         <tr class="${rowCls}">
           <td><strong style="color:var(--cyan-dark)">${t.nro_registro}</strong></td>
           <td><span class="badge badge-tipo">${t.tipo}</span></td>
-          <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.remitente}">${t.remitente}</td>
-          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.asunto}">${t.asunto}</td>
+          <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.remitente}">${t.remitente}</td>
+          <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.derivado_a || ''}">${t.derivado_a || '—'}</td>
+          <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.asunto}">${t.asunto}</td>
           <td>${badgePrioridad(t.prioridad)}</td>
           <td style="white-space:nowrap">${formatDate(t.fecha_recepcion)}</td>
           <td>${badgeEstado(t.estado)}</td>
@@ -104,7 +105,7 @@ async function loadData() {
         </tr>`;
     }).join('');
   } catch(e) {
-    tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#dc2626;padding:32px">Error: ${e.message}</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:#dc2626;padding:32px">Error: ${e.message}</td></tr>`;
   }
 }
 
