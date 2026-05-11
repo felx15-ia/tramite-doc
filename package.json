@@ -1,0 +1,11 @@
+{
+  "name": "gestor-documentario",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "serve . -l tcp://0.0.0.0:3000"
+  },
+  "dependencies": {
+    "serve": "^14.2.4",
+    "serve-handler": "^6.1.7"
+  }
+}

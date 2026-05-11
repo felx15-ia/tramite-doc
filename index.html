@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Trámite Documentario — Jefatura</title>
+  <meta name="description" content="Sistema de gestión y seguimiento de trámite documentario para Jefatura. Registre, siga y archive documentos con control de estados y alertas de tiempo.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ── HEADER ─────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-icon">📋</div>
+      <div>
+        <div class="header-title">Trámite Documentario</div>
+        <div class="header-subtitle">Panel de Administración — Jefatura</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="live-clock" id="live-clock">—</div>
+      <a href="vista_publica.html" target="_blank" class="btn-readonly" id="btn-vista-publica">
+        👁️ Vista Pública
+      </a>
+    </div>
+  </header>
+
+  <!-- ── KPIs ──────────────────────────────────────────── -->
+  <div class="kpi-grid">
+    <div class="kpi-card" style="--kpi-color: #6366f1">
+      <div class="kpi-value" id="kpi-total">0</div>
+      <div class="kpi-label">Total Trámites</div>
+      <div class="kpi-icon">📋</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #60a5fa">
+      <div class="kpi-value" id="kpi-recibido">0</div>
+      <div class="kpi-label">En Recibido</div>
+      <div class="kpi-icon">📥</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #c084fc">
+      <div class="kpi-value" id="kpi-firma">0</div>
+      <div class="kpi-label">En Firma</div>
+      <div class="kpi-icon">✍️</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #fb923c">
+      <div class="kpi-value" id="kpi-alerta">0</div>
+      <div class="kpi-label">Con Alerta (&gt;3 días)</div>
+      <div class="kpi-icon">⚠️</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #dc2626">
+      <div class="kpi-value" id="kpi-vencidos">0</div>
+      <div class="kpi-label">Plazo Vencido</div>
+      <div class="kpi-icon">⏰</div>
+    </div>
+  </div>
+
+  <!-- ── FORMULARIO DE INGRESO ──────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-header-icon">➕</span>
+      <span class="card-title">Registrar Nuevo Documento</span>
+      <span class="card-subtitle">Todos los campos marcados son obligatorios</span>
+    </div>
+
+    <form id="form-tramite" novalidate>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label" for="nro-registro">N° de Registro *</label>
+          <input class="form-control" type="text" id="nro-registro" name="nro-registro"
+            placeholder="Ej: OF-2025-001" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="tipo">Tipo *</label>
+          <select class="form-control" id="tipo" name="tipo" required>
+            <option value="">Seleccionar tipo...</option>
+            <option value="Oficio">📄 Oficio</option>
+            <option value="Informe">📑 Informe</option>
+            <option value="Carta">✉️ Carta</option>
+            <option value="Memorándum">📝 Memorándum</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="remitente">Remitente *</label>
+          <input class="form-control" type="text" id="remitente" name="remitente"
+            placeholder="Nombre o área remitente" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prioridad">Prioridad *</label>
+          <select class="form-control" id="prioridad" name="prioridad" required>
+            <option value="">Seleccionar prioridad...</option>
+            <option value="Alta">🔴 Alta</option>
+            <option value="Media">🟡 Media</option>
+            <option value="Baja">🟢 Baja</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fecha-recepcion">Fecha de Recepción *</label>
+          <input class="form-control" type="date" id="fecha-recepcion" name="fecha-recepcion" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fecha-limite">⏰ Fecha Límite de Respuesta</label>
+          <input class="form-control" type="date" id="fecha-limite" name="fecha-limite">
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label" for="asunto">Asunto *</label>
+          <input class="form-control" type="text" id="asunto" name="asunto"
+            placeholder="Descripción del asunto del documento" required>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label" for="observaciones">Observaciones</label>
+          <input class="form-control" type="text" id="observaciones" name="observaciones"
+            placeholder="Notas adicionales (opcional)">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="btn-guardar">
+            💾 Registrar Documento
+          </button>
+          <button type="reset" class="btn btn-ghost">
+            ↩️ Limpiar
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- ── TABLA PRINCIPAL ────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-header-icon">📊</span>
+      <span class="card-title">Registro de Trámites</span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" id="search-input"
+          placeholder="Buscar por asunto o remitente..." autocomplete="off">
+      </div>
+      <select class="filter-select" id="filter-estado">
+        <option value="">Todos los estados</option>
+        <option value="Recibido">📥 Recibido</option>
+        <option value="En Firma">✍️ En Firma</option>
+        <option value="Derivado">↗️ Derivado</option>
+        <option value="Archivado">🗄️ Archivado</option>
+      </select>
+      <button class="btn btn-ghost" id="btn-export-pdf" style="margin-left:auto; border:1px solid var(--border-color); background:white;">📄 Exportar PDF</button>
+      <span class="record-count" id="record-count" style="margin-left:10px;">— registros</span>
+    </div>
+
+    <!-- Leyenda alertas -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:11px;color:var(--text-muted);font-weight:600">Leyenda:</span>
+      <span class="legend-badge" style="background:var(--alert-org-bg);border:1px solid var(--alert-org-bdr);color:#ea580c">🟠 Recibido &gt;3 días</span>
+      <span class="legend-badge" style="background:var(--alert-red-bg);border:1px solid var(--alert-red-bdr);color:#dc2626">🔴 Recibido &gt;5 días</span>
+      <span class="legend-badge" style="background:#fef3c7;border:1px solid #fcd34d;color:#92400e">⚠️ Plazo próximo (&lt;3 días)</span>
+      <span class="legend-badge" style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b">⏰ Plazo vencido</span>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-wrapper">
+      <table class="data-table" id="data-table" aria-label="Tabla de trámites documentarios">
+        <thead>
+          <tr>
+            <th>N° Registro</th>
+            <th>Tipo</th>
+            <th>Remitente</th>
+            <th>Asunto</th>
+            <th>Prioridad</th>
+            <th>F. Recepción</th>
+            <th>Estado</th>
+            <th style="text-align:center">Días Gestión</th>
+            <th style="text-align:center">Fecha Límite</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Renderizado dinámico -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /app-shell -->
+
+<!-- ── MODAL CONFIRMAR ELIMINACIÓN ─────────────────────── -->
+<div class="modal-backdrop" id="delete-modal" role="dialog" aria-modal="true" aria-label="Confirmar eliminación">
+  <div class="modal">
+    <div class="modal-title">⚠️ Confirmar Eliminación</div>
+    <div class="modal-body" id="delete-msg">¿Está seguro de eliminar este trámite?</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancel-delete">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-delete">🗑️ Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ─────────────────────────────────── -->
+<div class="toast-container" aria-live="polite"></div>
+
+<!-- ── LIBRERÍAS PDF ────────────────────────────────────── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

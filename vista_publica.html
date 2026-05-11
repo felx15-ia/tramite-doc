@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vista Pública — Trámite Documentario</title>
+  <meta name="description" content="Consulta pública del estado de trámites documentarios. Vista de solo lectura para el equipo.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁️</text></svg>">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ── HEADER ─────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-icon" style="background: linear-gradient(135deg, #0ea5e9, #6366f1)">👁️</div>
+      <div>
+        <div class="header-title">Trámite Documentario</div>
+        <div class="header-subtitle">Vista de Consulta Pública — Solo Lectura</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="live-clock" id="live-clock-ro">—</div>
+      <a href="index.html" class="btn-readonly" style="color:var(--text-secondary)">
+        ← Ir al Panel Admin
+      </a>
+    </div>
+  </header>
+
+  <!-- ── BANNER SOLO LECTURA ────────────────────────────── -->
+  <div class="readonly-banner" role="status">
+    <span style="font-size:20px">🔒</span>
+    <div>
+      <strong>MODO CONSULTA — SOLO LECTURA</strong><br>
+      <span style="font-size:12px;opacity:0.8">Esta vista es informativa. No puede modificar ningún dato. Se actualiza automáticamente cada <strong id="refresh-countdown">60</strong> segundos. Última actualización: <strong id="last-update">—</strong></span>
+    </div>
+    <button id="btn-refresh" class="btn btn-ghost btn-sm" style="margin-left:auto;white-space:nowrap">
+      🔄 Actualizar ahora
+    </button>
+  </div>
+
+  <!-- ── TABLA PÚBLICA ──────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-header-icon">📊</span>
+      <span class="card-title">Estado de Trámites</span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" id="search-input-ro"
+          placeholder="Buscar por asunto o remitente..." autocomplete="off">
+      </div>
+      <select class="filter-select" id="filter-estado-ro">
+        <option value="">Todos los estados</option>
+        <option value="Recibido">📥 Recibido</option>
+        <option value="En Firma">✍️ En Firma</option>
+        <option value="Derivado">↗️ Derivado</option>
+        <option value="Archivado">🗄️ Archivado</option>
+      </select>
+      <span class="record-count" id="record-count-ro">— registros</span>
+    </div>
+
+    <!-- Leyenda alertas -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:11px;color:var(--text-muted);font-weight:600">Leyenda:</span>
+      <span class="legend-badge" style="background:var(--alert-org-bg);border:1px solid var(--alert-org-bdr);color:#ea580c">🟠 Recibido &gt;3 días</span>
+      <span class="legend-badge" style="background:var(--alert-red-bg);border:1px solid var(--alert-red-bdr);color:#dc2626">🔴 Recibido &gt;5 días</span>
+      <span class="legend-badge" style="background:#fef3c7;border:1px solid #fcd34d;color:#92400e">⚠️ Plazo próximo</span>
+      <span class="legend-badge" style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b">⏰ Plazo vencido</span>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-wrapper">
+      <table class="data-table" id="data-table-ro" aria-label="Consulta de trámites documentarios">
+        <thead>
+          <tr>
+            <th>N° Registro</th>
+            <th>Tipo</th>
+            <th>Remitente</th>
+            <th>Asunto</th>
+            <th>Prioridad</th>
+            <th>F. Recepción</th>
+            <th>Estado Actual</th>
+            <th style="text-align:center">Días Gestión</th>
+            <th style="text-align:center">Fecha Límite</th>
+          </tr>
+        </thead>
+        <tbody id="table-body-ro">
+          <!-- Renderizado dinámico -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer info -->
+  <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:8px">
+    Los datos se actualizan automáticamente. Para modificaciones, contacte a la Jefatura.
+  </p>
+
+</div><!-- /app-shell -->
+
+<script type="module" src="js/readonly.js"></script>
+</body>
+</html>
